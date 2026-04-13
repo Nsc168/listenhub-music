@@ -1206,32 +1206,15 @@
   }
 
   // --- Download ---
-  async function downloadTrack(audioUrl, filename) {
+  function downloadTrack(audioUrl, filename) {
     const proxyUrl = PROXY_URL.trim().replace(/\/$/, '');
-    if (!proxyUrl) {
-      // No proxy — try direct download as fallback
-      const a = document.createElement('a');
-      a.href = audioUrl;
-      a.download = filename;
-      a.target = '_blank';
-      a.click();
-      return;
-    }
-    try {
-      const dlUrl = `${proxyUrl}/download?url=${encodeURIComponent(audioUrl)}&filename=${encodeURIComponent(filename)}`;
-      const res = await fetch(dlUrl);
-      if (!res.ok) throw new Error('Download failed: ' + res.status);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-    } catch (err) {
-      alert('Download error: ' + err.message);
+    if (proxyUrl) {
+      // Open worker download URL directly in new tab — browser will save the file
+      const dlUrl = proxyUrl + '/download?url=' + encodeURIComponent(audioUrl) + '&filename=' + encodeURIComponent(filename);
+      window.open(dlUrl, '_blank');
+    } else {
+      // No proxy — open audio URL directly
+      window.open(audioUrl, '_blank');
     }
   }
 
