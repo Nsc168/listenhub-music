@@ -1320,7 +1320,7 @@
       if (task.status === 'success' && task.tracks.length > 0) {
         tracksHtml = '<div class="history-tracks">';
         task.tracks.forEach((track, ti) => {
-          const fname = (track.title || 'track').replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp3';
+          const fname = (track.title || 'track').replace(/[/\\:*?"<>|]/g, '_').trim() + '.mp3';
           tracksHtml += `
             <div class="history-track-row">
               <span>${track.title || 'Track ' + (ti+1)} · ${formatDuration(track.duration)}</span>
@@ -1414,7 +1414,7 @@
       const card = document.createElement('div');
       card.className = 'track-card';
       card.style.animationDelay = `${i*0.08}s`;
-      const filename = (track.title || 'track').replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp3';
+      const filename = (track.title || 'track').replace(/[/\\:*?"<>|]/g, '_').trim() + '.mp3';
       card.innerHTML = `
         <div class="track-title">${track.title || 'Untitled'}</div>
         <div class="track-tags">${track.tags || ''}</div>
