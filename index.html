@@ -1045,7 +1045,7 @@
     </div>
 
     <div id="m2panel-track" style="display:none">
-      <div class="form-group"><label>Reference Audio * <span style="color:var(--muted);font-size:9px">file OR providerSongId</span></label><div class="drop-zone" style="padding:16px"><input type="file" id="m2trackFile" accept=".mp3,.m4a,.wav" onchange="onMusic2File('track',this)"><div class="drop-label"><strong>Tap to select audio</strong></div></div><div class="file-selected" id="m2trackFileLabel"></div><input type="text" id="m2trackSongId" placeholder="or paste providerSongId" style="margin-top:8px;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:DM Mono,monospace;font-size:12px;padding:12px 14px;outline:none"></div>
+      <div class="form-group"><label>Reference Audio * <span style="color:var(--muted);font-size:9px">file OR providerSongId</span></label><div class="drop-zone" style="padding:16px"><input type="file" id="m2trackFile" accept=".mp3,.m4a,.wav,.flac" onchange="onMusic2File('track',this)"><div class="drop-label"><strong>Tap to select audio</strong></div></div><div class="file-selected" id="m2trackFileLabel"></div><input type="text" id="m2trackSongId" placeholder="or paste providerSongId" style="margin-top:8px;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:DM Mono,monospace;font-size:12px;padding:12px 14px;outline:none"></div>
       <div class="form-group"><label>Track Type *</label><select id="m2trackType" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:DM Mono,monospace;font-size:12px;padding:12px 14px;outline:none"><option value="Vocals">Vocals</option><option value="Instrumental">Instrumental</option><option value="Drums">Drums</option><option value="Bass">Bass</option><option value="Guitar">Guitar</option><option value="Keyboard">Keyboard</option><option value="Percussion">Percussion</option><option value="Strings">Strings</option><option value="Synth">Synth</option><option value="FX">FX</option><option value="Brass">Brass</option><option value="Woodwinds">Woodwinds</option></select></div>
       <div class="form-group"><label>Prompt *</label><input type="text" id="m2trackPrompt" placeholder="Energetic drum pattern with kick and snare…" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:DM Mono,monospace;font-size:13px;padding:14px 16px;outline:none"></div>
       <div class="form-group"><label>Lyrics <span style="color:var(--muted);font-size:9px">required if Vocals</span></label><textarea id="m2trackLyrics" placeholder="[Verse]&#10;…"></textarea></div>
@@ -1467,6 +1467,15 @@
       var btns = card.querySelectorAll('.download-btn');
       btns[0].onclick = (function(u, f){ return function(){ downloadTrack(u,f); }; })(track.audioUrl, fname);
       if (track.flacUrl && btns[1]) btns[1].onclick = (function(u,f){ return function(){ downloadTrack(u,f); }; })(track.flacUrl, fname.replace('.mp3','.flac'));
+      if (track.wavUrl) {
+        var wavBtn = document.createElement('button');
+        wavBtn.className = 'download-btn';
+        wavBtn.style.marginTop = '8px';
+        wavBtn.style.marginLeft = '8px';
+        wavBtn.textContent = '\u2b07 WAV';
+        wavBtn.onclick = (function(u,f){ return function(){ downloadTrack(u,f); }; })(track.wavUrl, fname.replace('.mp3','.wav'));
+        card.appendChild(wavBtn);
+      }
       el.appendChild(card);
       setTimeout((function(u,f){ return function(){ downloadTrack(u,f); }; })(track.audioUrl, fname), i * 1500);
     });
@@ -1581,7 +1590,7 @@
     try {
       var form = new FormData();
       if (file) form.append('audio', file, file.name); else form.append('providerSongId', songId);
-      form.append('trackType', trackType);
+      form.append('generateType', trackType);
       form.append('prompt', prompt);
       if (lyrics) form.append('lyrics', lyrics);
       var vg = document.getElementById('m2trackVocalGender').value;
